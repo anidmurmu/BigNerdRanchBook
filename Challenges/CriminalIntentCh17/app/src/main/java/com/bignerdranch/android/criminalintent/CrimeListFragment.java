@@ -8,7 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.telecom.Call;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.UUID;
+
+import static android.content.ContentValues.TAG;
 
 public class CrimeListFragment extends Fragment {
 
@@ -28,7 +33,6 @@ public class CrimeListFragment extends Fragment {
     private CrimeAdapter mAdapter;
     private boolean mSubtitleVisible;
     private Callbacks mCallbacks;
-
     /**
     *  Required interface for hosting activities
     */
@@ -61,6 +65,7 @@ public class CrimeListFragment extends Fragment {
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
         }
 
+        setCrimeRecyclerViewItemTouchListener();
         updateUI();
 
         return view;
@@ -83,6 +88,8 @@ public class CrimeListFragment extends Fragment {
         super.onDetach();
         mCallbacks = null;
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -145,7 +152,7 @@ public class CrimeListFragment extends Fragment {
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
+            implements View.OnClickListener{
 
         private Crime mCrime;
 
@@ -175,7 +182,7 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
-    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
+    class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
 
         private List<Crime> mCrimes;
 
@@ -203,5 +210,38 @@ public class CrimeListFragment extends Fragment {
         public void setCrimes(List<Crime> crimes) {
             mCrimes = crimes;
         }
+
+        public void onSwipeDelete(int position) {
+            if (position < 0 || position >= mCrimes.size()) {
+                return;
+            }
+            mCrimes.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void setCrimeRecyclerViewItemTouchListener() {
+
+        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                if(mAdapter != null) {
+                    int position = viewHolder.getAdapterPosition();
+                    Crime crime = mAdapter.mCrimes.get(position);
+                    CrimeLab.get(getActivity())
+                            .deleteCrime(crime);
+                    mAdapter.onSwipeDelete(position);
+                }
+
+            }
+        };
+
+        ItemTouchHelper iteItemTouchHelper = new ItemTouchHelper(itemTouchCallback);
+        iteItemTouchHelper.attachToRecyclerView(mCrimeRecyclerView);
     }
 }

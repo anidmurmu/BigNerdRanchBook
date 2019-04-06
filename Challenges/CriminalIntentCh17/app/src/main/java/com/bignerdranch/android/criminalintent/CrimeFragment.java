@@ -16,6 +16,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -176,7 +178,7 @@ public class CrimeFragment extends Fragment {
                         .getPackageManager().queryIntentActivities(caputreImage,
                                 PackageManager.MATCH_DEFAULT_ONLY);
 
-                for(ResolveInfo activity: cameraActivites) {
+                for (ResolveInfo activity : cameraActivites) {
                     getActivity().grantUriPermission(activity.activityInfo.packageName,
                             uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 }
@@ -291,4 +293,6 @@ public class CrimeFragment extends Fragment {
             mPhotoView.setImageBitmap(bitmap);
         }
     }
+
+
 }
