@@ -73,6 +73,17 @@ public class CrimeFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
+            mPhotoView.setImageDrawable(null);
+            mPhotoView.setContentDescription(
+                    getString(R.string.crime_photo_no_image_description));
+        }
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mCallbacks = (Callbacks) context;
@@ -251,6 +262,11 @@ public class CrimeFragment extends Fragment {
 
             updateCrime();
             updatePhotoView();
+            if (mPhotoFile == null || !mPhotoFile.exists()) {
+                mPhotoView.announceForAccessibility("Image not set");
+            } else {
+                mPhotoView.announceForAccessibility("Image is set");
+            }
         }
     }
 
