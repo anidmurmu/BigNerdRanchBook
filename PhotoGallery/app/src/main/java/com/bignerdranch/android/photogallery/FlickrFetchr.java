@@ -57,6 +57,7 @@ public class FlickrFetchr {
         try {
             String url = Uri.parse("https://api.flickr.com/services/rest")
                     .buildUpon()
+                    .appendQueryParameter("method", "flickr.photos.getRecent")
                     .appendQueryParameter("api_key", API_KEY)
                     .appendQueryParameter("format", "json")
                     .appendQueryParameter("nojsoncallback", "1")
@@ -91,6 +92,7 @@ public class FlickrFetchr {
             }
 
             item.setUrl(photoJsonObject.getString("url_s"));
+            items.add(item);
         }
     }
 }
