@@ -24,8 +24,8 @@ public class PhotoGalleryFragment extends Fragment {
 
     private RecyclerView mPhotoRecyclerView;
     private List<GalleryItem> mItems = new ArrayList<>();
-    private Boolean isScrolling = false;
-    private int mCurrentItems, mTotalItems, mScrolledOutItems;
+    private PhotoAdapter mPhotoAdapter;
+    private int mCurrentPage;
     private GridLayoutManager mLayoutManger;
 
     public static PhotoGalleryFragment newInstance() {
@@ -36,7 +36,8 @@ public class PhotoGalleryFragment extends Fragment {
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setRetainInstance(true);
-        new FetchItemsTask().execute();
+        mCurrentPage = 1;
+        new FetchItemsTask().execute(mCurrentPage++);
     }
 
     @Nullable
@@ -51,20 +52,13 @@ public class PhotoGalleryFragment extends Fragment {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                    isScrolling = true;
-                }
             }
 
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                mCurrentItems = mLayoutManger.getChildCount();
-                mTotalItems = mLayoutManger.getItemCount();
-                mScrolledOutItems = mLayoutManger.findFirstVisibleItemPosition();
-
-                if(isScrolling && (mCurrentItems + mScrolledOutItems == mTotalItems)) {
-
+                if(!recyclerView.canScrollVertically(1)) {
+                    new FetchItemsTask().execute(mCurrentPage++);
                 }
             }
         });
@@ -76,7 +70,8 @@ public class PhotoGalleryFragment extends Fragment {
 
     private void setupAdapter() {
         if (isAdded()) {
-            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
+            mPhotoAdapter = new PhotoAdapter(mItems);
+            mPhotoRecyclerView.setAdapter(mPhotoAdapter);
         }
     }
 
@@ -120,16 +115,16 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 
-    private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+    private class FetchItemsTask extends AsyncTask<Integer, Void, List<GalleryItem>> {
+
         @Override
-        protected List<GalleryItem> doInBackground(Void... voids) {
-            new FlickrFetchr().fetchItems();
-            return new FlickrFetchr().fetchItems();
+        protected List<GalleryItem> doInBackground(Integer... pageNumber) {
+            return new FlickrFetchr().fetchItems(pageNumber[0]);
         }
 
         @Override
         protected void onPostExecute(List<GalleryItem> items) {
-            mItems = items;
+            mItems.addAll(items);
             setupAdapter();
         }
     }
