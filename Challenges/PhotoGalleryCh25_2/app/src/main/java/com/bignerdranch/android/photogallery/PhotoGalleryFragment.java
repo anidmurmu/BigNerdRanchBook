@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -23,6 +24,9 @@ public class PhotoGalleryFragment extends Fragment {
 
     private RecyclerView mPhotoRecyclerView;
     private List<GalleryItem> mItems = new ArrayList<>();
+    private Boolean isScrolling = false;
+    private int mCurrentItems, mTotalItems, mScrolledOutItems;
+    private GridLayoutManager mLayoutManger;
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
@@ -41,7 +45,29 @@ public class PhotoGalleryFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
 
         mPhotoRecyclerView = v.findViewById(R.id.photo_recycler_view);
-        mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        mLayoutManger = new GridLayoutManager(getActivity(), 3);
+        mPhotoRecyclerView.setLayoutManager(mLayoutManger);
+        mPhotoRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    isScrolling = true;
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                mCurrentItems = mLayoutManger.getChildCount();
+                mTotalItems = mLayoutManger.getItemCount();
+                mScrolledOutItems = mLayoutManger.findFirstVisibleItemPosition();
+
+                if(isScrolling && (mCurrentItems + mScrolledOutItems == mTotalItems)) {
+
+                }
+            }
+        });
 
         setupAdapter();
 
