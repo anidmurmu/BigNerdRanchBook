@@ -25,7 +25,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
         void onThumbnailDownloaded(T photoHolder, Bitmap bitmap);
     }
 
-    public void setmThumbnailDownloadListener(ThumbnailDownloadListener<T> listener) {
+    public void setThumbnailDownloadListener(ThumbnailDownloadListener<T> listener) {
         mThumbnailDownloadListener = listener;
     }
 

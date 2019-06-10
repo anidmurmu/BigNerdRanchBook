@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +39,7 @@ public class PhotoGalleryFragment extends Fragment {
 
     Handler responseHandler = new Handler();
     mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
-    mThumbnailDownloader.setmThumbnailDownloadListener(
-        new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
+    mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
           @Override
           public void onThumbnailDownloaded(PhotoHolder photoHolder, Bitmap bitmap) {
             Drawable drawable = new BitmapDrawable(getResources(), bitmap);
@@ -135,7 +133,6 @@ public class PhotoGalleryFragment extends Fragment {
 
     @Override
     protected List<GalleryItem> doInBackground(Void... voids) {
-      new FlickrFetchr().fetchItems();
       return new FlickrFetchr().fetchItems();
     }
 
