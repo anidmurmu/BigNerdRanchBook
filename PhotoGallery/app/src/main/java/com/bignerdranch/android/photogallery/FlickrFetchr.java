@@ -25,6 +25,7 @@ public class FlickrFetchr {
             .parse("https://api.flickr.com/services/rest")
             .buildUpon()
             .appendQueryParameter("api_key", API_KEY)
+            .appendQueryParameter("format", "json")
             .appendQueryParameter("nojsoncallback", "1")
             .appendQueryParameter("extras", "url_s")
             .build();
