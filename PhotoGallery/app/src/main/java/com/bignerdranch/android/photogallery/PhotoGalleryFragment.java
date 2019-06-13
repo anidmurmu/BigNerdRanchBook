@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +41,8 @@ public class PhotoGalleryFragment extends Fragment {
     setRetainInstance(true);
     setHasOptionsMenu(true);
     updateItems();
+
+    PollService.setServiceAlarm(getActivity(), true);
 
     Handler responseHandler = new Handler();
     mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
