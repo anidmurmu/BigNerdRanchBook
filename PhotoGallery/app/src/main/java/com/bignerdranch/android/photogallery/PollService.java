@@ -19,7 +19,10 @@ public class PollService extends IntentService {
   public static final String TAG = "PollService";
 
   // Set interval to 1 minute
-  public static final long POLL_INTERVAL_MS = TimeUnit.MINUTES.toMillis(15);
+  public static final long POLL_INTERVAL_MS = TimeUnit.MINUTES.toMillis(1);
+
+  public static final String ACTION_SHOW_NOTIFICATION = "com.bignerranch.android.photogallery.SHOW_NOTIFICATION";
+  public static final String PERM_PRIVATE = "android.bignerdranch.android.photogallery.PRIVATE";
 
   public static Intent newIntent(Context context) {
     return new Intent(context, PollService.class);
@@ -38,6 +41,8 @@ public class PollService extends IntentService {
       alarmManager.cancel(pi);
       pi.cancel();
     }
+
+    QueryPreferences.setAlarmOn(context, isOn);
   }
 
   public static boolean isServiceAlarmOn(Context context) {
@@ -90,6 +95,8 @@ public class PollService extends IntentService {
 
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
       notificationManager.notify(0, notification);
+
+      sendBroadcast(new Intent(ACTION_SHOW_NOTIFICATION), PERM_PRIVATE);
     }
 
     QueryPreferences.setLastResultId(this, resultId);
