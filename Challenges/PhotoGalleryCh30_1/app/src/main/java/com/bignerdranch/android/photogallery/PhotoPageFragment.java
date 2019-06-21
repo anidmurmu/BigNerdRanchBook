@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -66,6 +69,20 @@ public class PhotoPageFragment extends VisibleFragment {
         });
         mWebView.setWebViewClient(new WebViewClient());
         mWebView.loadUrl(mUri.toString());
+
+        mWebView.setOnKeyListener(new OnKeyListener() {
+
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK
+                    && event.getAction() == MotionEvent.ACTION_UP
+                    && mWebView.canGoBack()) {
+                    mWebView.goBack();
+                    return true;
+                }
+                return false;
+            }
+
+        });
 
         return v;
     }
